@@ -22,18 +22,8 @@ https://github.com/immortalwrt/immortalwrt
 ```
 
 ### 固件初始配置
-- 默认管理 IP:
-```bash
-192.168.3.1
-```
-- 用户名:
-```bash
-root
-```
-- 密码:
-```bash
-password
-```
+- 默认管理IP:`192.168.1.1` 用户名:`root`密码:`password1`
+
 
 
 ### 感谢名单（向他们学习才有这个项目）
