@@ -15,7 +15,7 @@ env:
   REPO_URL: https://github.com/immortalwrt/immortalwrt
   REPO_BRANCH: master
   FEEDS_CONF: immortalwrt/R3P/feeds.conf.default
-  CONFIG_FILE: immortalwrt/R3P/.config
+  CONFIG_FILE: immortalwrt/R3P/closed.config
   DIY_P1_SH: immortalwrt/R3P/diy-part1.sh
   DIY_P2_SH: immortalwrt/R3P/diy-part2.sh
   SSH_ACTIONS: false
