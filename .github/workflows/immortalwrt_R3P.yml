@@ -22,7 +22,7 @@ env:
   UPLOAD_FIRMWARE: true
   UPLOAD_RELEASE: true
   TZ: Asia/Shanghai
-  
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -96,7 +96,7 @@ jobs:
       run: |
         cd openwrt
         grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/' > DEVICE_NAME
-        [ -s DEVICE_NAME ] && echo "DEVICE_NAME=_$(cat DEVICE_NAME)" >> $GITHUB_ENV
+        [ -s DEVICE_NAME ] && echo "DEVICE_NAME=$(cat DEVICE_NAME)" >> $GITHUB_ENV
         echo "date1=$(date +'%Y.%m.%d-%H.%M')" >> $GITHUB_ENV
         echo "date2=$(date +'%Y.%m.%d')" >> $GITHUB_ENV
         echo "date3=$(date "+%Y年%m月%d日")" >> $GITHUB_ENV
@@ -114,7 +114,7 @@ jobs:
         -or -name "*factory*" \
         -or -name "*sysupgrade*" \
         | xargs -i mv -f {} ./firmware/
-        cp openwrt/.config  ./firmware/${{ env.DEVICE_NAME }}.config
+        cp openwrt/.config  ./firmware/${{ env.date1 }}_${{ env.DEVICE_NAME }}.config
         cd firmware
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
         echo "::set-output name=status::success"
@@ -123,7 +123,7 @@ jobs:
       uses: actions/upload-artifact@main
       if: steps.organize.outputs.status == 'success' && !cancelled()
       with:
-        name: ${{ env.date1 }}${{ env.DEVICE_NAME }}
+        name: ${{ env.date1 }}_${{ env.DEVICE_NAME }}
         path: ${{ env.FIRMWARE }}
 
     - name: UPLOAD_RELEASE 生成发布标签
