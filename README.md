@@ -22,7 +22,7 @@ https://github.com/immortalwrt/immortalwrt
 ```
 
 ### 固件初始配置
-- 默认管理IP:`192.168.1.1` 用户名:`root`密码:`password1`
+- 默认管理IP:`192.168.1.1` 用户名:`root`密码:`password`
 
 
 
