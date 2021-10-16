@@ -24,8 +24,6 @@ https://github.com/immortalwrt/immortalwrt
 ### 固件初始配置
 - 默认管理IP:`192.168.1.1` 用户名:`root`密码:`password`
 
-
-
 ### 感谢名单（向他们学习才有这个项目）
 - [P3TERX](https://github.com/P3TERX/Actions-OpenWrt)
 [Read the details in my blog (in Chinese) | 中文教程](https://p3terx.com/archives/build-openwrt-with-github-actions.html)
