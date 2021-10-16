@@ -1,4 +1,4 @@
-name: immortalwrt_R3P
+name: immortalwrt_R3P_闭源wifi
 
 on:
   repository_dispatch:
