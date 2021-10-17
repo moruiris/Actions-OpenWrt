@@ -106,7 +106,7 @@ jobs:
       if: (!cancelled())
       run: df -hT
 
-    - name: 整理文件
+    - name: 整理文件并重命名
       id: organize
       if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
       run: | 
@@ -129,7 +129,7 @@ jobs:
         name: ${{ env.date1 }}_${{ env.OPENWRT_NAME }}_${{ env.DEVICE_NAME }}
         path: ${{ env.FIRMWARE }}
 
-    - name: 生成发布标签
+    - name: 生成release标签
       id: tag
       if: env.UPLOAD_RELEASE == 'true' && !cancelled()
       run: |
