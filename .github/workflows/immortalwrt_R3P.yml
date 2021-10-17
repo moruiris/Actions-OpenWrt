@@ -22,6 +22,7 @@ env:
   UPLOAD_FIRMWARE: true
   UPLOAD_RELEASE: true
   TZ: Asia/Shanghai
+  OPENWRT_NAME: immortalwrt
 
 jobs:
   build:
@@ -105,17 +106,19 @@ jobs:
       if: (!cancelled())
       run: df -hT
 
-    - name: UPLOAD_FIRMWARE 整理文件
+    - name: 整理文件
       id: organize
       if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
       run: | 
         mkdir firmware && find openwrt/bin/targets/*/*/ -maxdepth 1 \
-        -name "*combined*" \
-        -or -name "*factory*" \
+        -name "*factory*" \
         -or -name "*sysupgrade*" \
+        -or -name "*combined*" \
         | xargs -i mv -f {} ./firmware/
-        cp openwrt/.config  ./firmware/${{ env.date1 }}_${{ env.DEVICE_NAME }}.config
+        cp openwrt/.config  ./firmware/${{ env.date1 }}_${{ env.OPENWRT_NAME }}_${{ env.DEVICE_NAME }}.config
         cd firmware
+        sudo -E apt-get -qq install rename
+        rename 's/^/${{ env.date1 }}_/' *.bin
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
         echo "::set-output name=status::success"
       
@@ -123,10 +126,10 @@ jobs:
       uses: actions/upload-artifact@main
       if: steps.organize.outputs.status == 'success' && !cancelled()
       with:
-        name: ${{ env.date1 }}_${{ env.DEVICE_NAME }}
+        name: ${{ env.date1 }}_${{ env.OPENWRT_NAME }}_${{ env.DEVICE_NAME }}
         path: ${{ env.FIRMWARE }}
 
-    - name: UPLOAD_RELEASE 生成发布标签
+    - name: 生成发布标签
       id: tag
       if: env.UPLOAD_RELEASE == 'true' && !cancelled()
       run: |
