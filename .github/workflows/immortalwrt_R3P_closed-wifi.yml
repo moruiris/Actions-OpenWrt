@@ -1,4 +1,4 @@
-name: immortalwrt_R3P_开源wifi
+name: immortalwrt_R3P_closed-wifi
 
 on:
   repository_dispatch:
@@ -22,7 +22,7 @@ env:
   UPLOAD_FIRMWARE: true
   UPLOAD_RELEASE: true
   TZ: Asia/Shanghai
-  WIFI_NAME: 开源wifi
+  WIFI_NAME: closed-wifi
   
 jobs:
   build:
