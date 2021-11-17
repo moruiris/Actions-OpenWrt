@@ -12,17 +12,17 @@ on:
     - cron: 0 16 * * *
 
 env:
-  REPO_URL: https://github.com/immortalwrt/immortalwrt
+  REPO_URL: https://github.com/openwrt/openwrt
   REPO_BRANCH: master
-  FEEDS_CONF: immortalwrt/R3P/feeds.conf.default
-  CONFIG_FILE: immortalwrt/R3P/.config
-  DIY_P1_SH: immortalwrt/R3P/diy-part1.sh
-  DIY_P2_SH: immortalwrt/R3P/diy-part2.sh
+  FEEDS_CONF: openwrt/R3P/feeds.conf.default
+  CONFIG_FILE: openwrt/R3P/.config
+  DIY_P1_SH: openwrt/R3P/diy-part1.sh
+  DIY_P2_SH: openwrt/R3P/diy-part2.sh
   SSH_ACTIONS: false
   UPLOAD_FIRMWARE: true
   UPLOAD_RELEASE: true
   TZ: Asia/Shanghai
-  OPENWRT_NAME: immortalwrt
+  OPENWRT_NAME: openwrt
 
 jobs:
   build:
