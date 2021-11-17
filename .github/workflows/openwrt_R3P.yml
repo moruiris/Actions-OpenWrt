@@ -1,4 +1,4 @@
-name: immortalwrt_R3P
+name: openwrt_R3P
 
 on:
   repository_dispatch:
