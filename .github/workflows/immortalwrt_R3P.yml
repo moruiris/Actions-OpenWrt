@@ -46,7 +46,7 @@ jobs:
         
     - name: 下载固件源码
       run: |
-        git clone $REPO_URL -b $REPO_BRANCH ./openwrt
+        git clone $REPO_URL -b $REPO_BRANCH openwrt
          
     - name: 加载feeds.conf.default & DIY_P1_SH
       run: |
