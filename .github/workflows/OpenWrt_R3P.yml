@@ -1,4 +1,4 @@
-name: openwrt_R3P
+name: OpenWrt_R3P
 
 on:
   repository_dispatch:
@@ -14,15 +14,15 @@ on:
 env:
   REPO_URL: https://github.com/openwrt/openwrt
   REPO_BRANCH: master
-  FEEDS_CONF: openwrt/R3P/feeds.conf.default
-  CONFIG_FILE: openwrt/R3P/.config
-  DIY_P1_SH: openwrt/R3P/diy-part1.sh
-  DIY_P2_SH: openwrt/R3P/diy-part2.sh
+  FEEDS_CONF: OpenWrt/R3P/feeds.conf.default
+  CONFIG_FILE: OpenWrt/R3P/.config
+  DIY_P1_SH: OpenWrt/R3P/diy-part1.sh
+  DIY_P2_SH: OpenWrt/R3P/diy-part2.sh
   SSH_ACTIONS: false
   UPLOAD_FIRMWARE: true
   UPLOAD_RELEASE: true
   TZ: Asia/Shanghai
-  OPENWRT_NAME: openwrt
+  OPENWRT_NAME: OpenWrt
 
 jobs:
   build:
@@ -46,7 +46,6 @@ jobs:
         
     - name: 下载固件源码
       run: |
-        rm -rf ./*
         git clone $REPO_URL -b $REPO_BRANCH openwrt
          
     - name: 加载feeds.conf.default & DIY_P1_SH
