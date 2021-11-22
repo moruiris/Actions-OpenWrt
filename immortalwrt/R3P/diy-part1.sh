@@ -2,5 +2,4 @@
 #
 svn co  https://github.com/moruiris/openwrt-packages/trunk/luci-app-chinadns-ng ./package/moruiris/luci-app-chinadns-ng
 svn co  https://github.com/moruiris/openwrt-packages/trunk/luci-app-adguardhome ./package/moruiris/luci-app-adguardhome
-svn co  https://github.com/moruiris/openwrt-packages/trunk/luci-app-netdata ./package/moruiris/luci-app-netdata
 svn co  https://github.com/moruiris/openwrt-packages/trunk/luci-app-netspeedtest ./package/moruiris/luci-app-netspeedtest
