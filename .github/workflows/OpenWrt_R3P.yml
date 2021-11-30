@@ -111,14 +111,14 @@ jobs:
       if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
       run: | 
         mkdir firmware && find openwrt/bin/targets/*/*/ -maxdepth 1 \
-        -name "*factory*" \
+        -name "*kernel*" \
+        -or -name "*factory*" \
         -or -name "*sysupgrade*" \
-        -or -name "*combined*" \
         | xargs -i mv -f {} ./firmware/
         cp openwrt/.config  ./firmware/${{ env.date1 }}_${{ env.OPENWRT_NAME }}_${{ env.DEVICE_NAME }}.config
         cd firmware
         sudo -E apt-get -qq install rename
-        rename 's/^/${{ env.date1 }}_/' *.bin
+        rename 's/^/${{ env.date1 }}_${{ env.OPENWRT_NAME }}_/' *.bin
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
         echo "::set-output name=status::success"
       
