@@ -113,7 +113,7 @@ jobs:
         -name "*image.iso" \
         -or -name "*squashfs-combined.img.gz" \
         | xargs -i mv -f {} ./firmware/
-        cp openwrt/.config  ./firmware/${{ env.date1 }}_${{ env.OPENWRT_NAME }}_${{ env.DEVICE_NAME }}.config
+        cp openwrt/.config  ./firmware/${{ env.date1 }}_${{ env.OPENWRT_NAME }}_x86-64.config
         cd firmware
         sudo -E apt-get -qq install rename
         rename 's/^/${{ env.date1 }}_${{ env.OPENWRT_NAME }}_/' *.iso
