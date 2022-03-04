@@ -110,13 +110,13 @@ jobs:
       if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
       run: | 
         mkdir firmware && find openwrt/bin/targets/*/*/ -maxdepth 1 \
-        -name "*image.iso" \
+        -name "*squashfs-combined.vmdk" \
         -or -name "*squashfs-combined.img.gz" \
         | xargs -i mv -f {} ./firmware/
         cp openwrt/.config  ./firmware/${{ env.date1 }}_${{ env.OPENWRT_NAME }}_x86-64.config
         cd firmware
         sudo -E apt-get -qq install rename
-        rename 's/^/${{ env.date1 }}_${{ env.OPENWRT_NAME }}_/' *.iso
+        rename 's/^/${{ env.date1 }}_${{ env.OPENWRT_NAME }}_/' *.vmdk
         rename 's/^/${{ env.date1 }}_${{ env.OPENWRT_NAME }}_/' *.img.gz
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
         echo "::set-output name=status::success"
