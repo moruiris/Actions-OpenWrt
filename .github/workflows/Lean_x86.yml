@@ -110,8 +110,8 @@ jobs:
       if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
       run: | 
         mkdir firmware && find openwrt/bin/targets/*/*/ -maxdepth 1 \
-        -name "*squashfs-combined-efi.vmdk" \
-        -or -name "*squashfs-combined-efi.img.gz" \
+        -name "*squashfs-combined.vmdk" \
+        -or -name "*squashfs-combined.img.gz" \
         | xargs -i mv -f {} ./firmware/
         cp openwrt/.config  ./firmware/${{ env.date1 }}_${{ env.OPENWRT_NAME }}_x86-64.config
         cd firmware
