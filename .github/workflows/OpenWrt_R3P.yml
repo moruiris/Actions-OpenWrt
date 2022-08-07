@@ -13,7 +13,7 @@ on:
 
 env:
   REPO_URL: https://github.com/openwrt/openwrt
-  REPO_BRANCH: openwrt-21.02
+  REPO_BRANCH: master
   FEEDS_CONF: OpenWrt/R3P/feeds.conf.default
   CONFIG_FILE: OpenWrt/R3P/.config
   DIY_P1_SH: OpenWrt/R3P/diy-part1.sh
