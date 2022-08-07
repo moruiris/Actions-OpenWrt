@@ -12,7 +12,7 @@ on:
 
 env:
   REPO_URL: https://github.com/immortalwrt/immortalwrt
-  REPO_BRANCH: openwrt-21.02
+  REPO_BRANCH: master
   FEEDS_CONF: immortalwrt/x86/feeds.conf.default
   CONFIG_FILE: immortalwrt/x86/.config
   DIY_P1_SH: immortalwrt/x86/diy-part1.sh
