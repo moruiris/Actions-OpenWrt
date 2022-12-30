@@ -62,6 +62,7 @@ jobs:
       run: |
         ./scripts/feeds update -a
         ./scripts/feeds install -a
+
     - name: 加载config & DIY_P2_SH
       run: |
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
@@ -91,7 +92,7 @@ jobs:
         cd openwrt
         echo -e "$(nproc) thread compile"
         make -j$(nproc) || make -j1 || make -j1 V=s
-        echo "::set-output name=status::success"
+        echo "status=success" >> $GITHUB_OUTPUT
               
     - name: 设置当前的日期
       id: date
@@ -121,7 +122,7 @@ jobs:
         rename 's/^/${{ env.date1 }}_${{ env.OPENWRT_NAME }}_/' *.vmdk
         rename 's/^/${{ env.date1 }}_${{ env.OPENWRT_NAME }}_/' *.img.gz
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
-        echo "::set-output name=status::success"
+        echo "status=success" >> $GITHUB_OUTPUT
       
     - name: 上传固件到github
       uses: actions/upload-artifact@main
@@ -138,7 +139,7 @@ jobs:
         touch release.txt
         echo "由衷感谢所有为openwrt无私奉献的大佬们" >> release.txt
         echo "📥 固件下载" >> release.txt
-        echo "::set-output name=status::success"
+        echo "status=success" >> $GITHUB_OUTPUT
         
     - name: 发布至release
       uses: softprops/action-gh-release@v1
