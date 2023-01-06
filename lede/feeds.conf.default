@@ -1,4 +1,3 @@
-
 src-git-full packages https://git.openwrt.org/feed/packages.git
 src-git-full luci https://git.openwrt.org/project/luci.git
 src-git-full routing https://git.openwrt.org/feed/routing.git
