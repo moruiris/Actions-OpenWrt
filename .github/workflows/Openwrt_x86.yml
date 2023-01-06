@@ -1,4 +1,4 @@
-name: openwrt_x86
+name: Openwrt_x86
 
 on:
   schedule:
@@ -8,13 +8,13 @@ on:
 env:
   REPO_URL: https://github.com/openwrt/openwrt
   REPO_BRANCH: master
-  CONFIG_FILE: openwrt/x86/.config
-  DIY_P1_SH: openwrt/diy-part1.sh
-  DIY_P2_SH: openwrt/diy-part2.sh
+  CONFIG_FILE: Openwrt/x86/.config
+  DIY_P1_SH: Openwrt/diy-part1.sh
+  DIY_P2_SH: Openwrt/diy-part2.sh
   UPLOAD_FIRMWARE: true
   UPLOAD_RELEASE: true
   TZ: Asia/Shanghai
-  OPENWRT_NAME: openwrt
+  OPENWRT_NAME: Openwrt
 
 jobs:
   build:
