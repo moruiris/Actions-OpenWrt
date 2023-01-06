@@ -1,4 +1,4 @@
-name: openwrt_R3P
+name: OpenWrt_R3P
 
 on:
   schedule:
@@ -8,13 +8,15 @@ on:
 env:
   REPO_URL: https://github.com/openwrt/openwrt
   REPO_BRANCH: master
-  CONFIG_FILE: R3P/.config
-  DIY_P1_SH: diy-part1.sh
-  DIY_P2_SH: diy-part2.sh
+  FEEDS_CONF: OpenWrt/R3P/feeds.conf.default
+  CONFIG_FILE: OpenWrt/R3P/.config
+  DIY_P1_SH: OpenWrt/R3P/diy-part1.sh
+  DIY_P2_SH: OpenWrt/R3P/diy-part2.sh
+  SSH_ACTIONS: false
   UPLOAD_FIRMWARE: true
   UPLOAD_RELEASE: true
   TZ: Asia/Shanghai
-  OPENWRT_NAME: openwrt
+  OPENWRT_NAME: Openwrt
 
 jobs:
   build:
@@ -22,7 +24,7 @@ jobs:
 
     steps:
     - name: 检查项目分支
-      uses: actions/checkout@openwrt
+      uses: actions/checkout@main
 
     - name: 初始化编译环境
       env:
@@ -43,6 +45,7 @@ jobs:
          
     - name: 加载feeds.conf.default & DIY_P1_SH
       run: |
+        [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
         chmod +x $DIY_P1_SH
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P1_SH
@@ -52,14 +55,12 @@ jobs:
       run: |
         ./scripts/feeds update -a
         ./scripts/feeds install -a
-
     - name: 加载config & DIY_P2_SH
       run: |
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
         chmod +x $DIY_P2_SH
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P2_SH
-
     - name: 下载安装包
       id: package
       run: |
