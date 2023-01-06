@@ -1,4 +1,4 @@
-name: Lean_x86
+name: lede_x86
 
 on:
   schedule:
@@ -8,15 +8,13 @@ on:
 env:
   REPO_URL: https://github.com/coolsnowwolf/lede
   REPO_BRANCH: master
-  FEEDS_CONF: Lean/x86/feeds.conf.default
-  CONFIG_FILE: Lean/x86/.config
-  DIY_P1_SH: Lean/x86/diy-part1.sh
-  DIY_P2_SH: Lean/x86/diy-part2.sh
-  SSH_ACTIONS: false
+  CONFIG_FILE: lede/x86/.config
+  DIY_P1_SH: lede/diy-part1.sh
+  DIY_P2_SH: lede/diy-part2.sh
   UPLOAD_FIRMWARE: true
   UPLOAD_RELEASE: true
   TZ: Asia/Shanghai
-  OPENWRT_NAME: Lede
+  OPENWRT_NAME: lede
 
 jobs:
   build:
@@ -45,7 +43,6 @@ jobs:
          
     - name: 加载feeds.conf.default & DIY_P1_SH
       run: |
-        [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
         chmod +x $DIY_P1_SH
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P1_SH
