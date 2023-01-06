@@ -8,15 +8,13 @@ on:
 env:
   REPO_URL: https://github.com/immortalwrt/immortalwrt
   REPO_BRANCH: master
-  FEEDS_CONF: immortalwrt/x86/feeds.conf.default
   CONFIG_FILE: immortalwrt/x86/.config
-  DIY_P1_SH: immortalwrt/x86/diy-part1.sh
-  DIY_P2_SH: immortalwrt/x86/diy-part2.sh
-  SSH_ACTIONS: false
+  DIY_P1_SH: immortalwrt/diy-part1.sh
+  DIY_P2_SH: immortalwrt/diy-part2.sh
   UPLOAD_FIRMWARE: true
   UPLOAD_RELEASE: true
   TZ: Asia/Shanghai
-  OPENWRT_NAME: Immortalwrt
+  OPENWRT_NAME: immortalwrt
 
 jobs:
   build:
@@ -45,7 +43,6 @@ jobs:
          
     - name: 加载feeds.conf.default & DIY_P1_SH
       run: |
-        [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
         chmod +x $DIY_P1_SH
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P1_SH
