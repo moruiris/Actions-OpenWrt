@@ -20,12 +20,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    name: Update ${{matrix.target}}
-    strategy:
-      fail-fast: false
-      matrix:
-        target: [Openwrt]
-
     steps:
     - name: 检查项目分支
       uses: actions/checkout@main
@@ -140,23 +134,3 @@ jobs:
         name: ${{ env.date3 }}
         tag_name: ${{ steps.tag.outputs.release_tag }}
         body_path: release.txt
-
-    - name: config文件上传自动更新1
-      run : |
-        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        git config --global user.name "github-actions[bot]"
-        sudo timedatectl set-timezone "Asia/Shanghai"
-    - name: config文件上传自动更新2
-        cd $GITHUB_WORKSPACE
-        git clone -b ${{matrix.target}} https://github.com/moruiris/Actions-OpenWrt.git ${{matrix.target}}
-        cd main
-        git rm -r --cache * >/dev/null 2>&1 &
-        rm -rf * >/dev/null 2>&1
-    - name: config文件上传自动更新3
-      env: 
-        ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-      run: |
-        cd $GITHUB_WORKSPACE/${{matrix.target}}
-        git add .
-        git commit -am "update $(date +%Y-%m-%d" "%H:%M:%S)"
-        git push --quiet "https://${{ secrets.ACCESS_TOKEN }}@github.com/moruiris/Actions-OpenWrt.git" HEAD:${{matrix.target}}
