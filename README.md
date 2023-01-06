@@ -12,13 +12,13 @@ https://github.com/openwrt/openwrt
 ```bash
 https://github.com/coolsnowwolf/lede
 ```
-- Lienol-[Lienol/openwrt](https://github.com/Lienol/openwrt).
-```bash
-https://github.com/Lienol/openwrt
-```
 - immortalwrt-[immortalwrt/immortalwrt](https://github.com/immortalwrt/immortalwrt).
 ```bash
 https://github.com/immortalwrt/immortalwrt
+```
+- Lienol-[Lienol/openwrt](https://github.com/Lienol/openwrt).
+```bash
+https://github.com/Lienol/openwrt
 ```
 
 ### 固件初始配置
