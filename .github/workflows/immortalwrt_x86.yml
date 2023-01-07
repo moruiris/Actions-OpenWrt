@@ -15,6 +15,7 @@ env:
   UPLOAD_RELEASE: true
   TZ: Asia/Shanghai
   OPENWRT_NAME: immortalwrt
+  OPENWRT_NAME1: x86
 
 jobs:
   build:
@@ -99,7 +100,6 @@ jobs:
         -name "*squashfs-combined.vmdk" \
         -or -name "*squashfs-combined.img.gz" \
         | xargs -i mv -f {} ./firmware/
-        cp openwrt/.config  ./firmware/${{ env.date1 }}_${{ env.OPENWRT_NAME }}_x86-64.config
         cd firmware
         sudo -E apt-get -qq install rename
         rename 's/^/${{ env.date1 }}_${{ env.OPENWRT_NAME }}_/' *.vmdk
@@ -134,3 +134,23 @@ jobs:
         name: ${{ env.date3 }}
         tag_name: ${{ steps.tag.outputs.release_tag }}
         body_path: release.txt
+
+    - name: config文件上传自动更新1
+      run : |
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config --global user.name "github-actions[bot]"
+        sudo timedatectl set-timezone "Asia/Shanghai"
+    - name: config文件上传自动更新2
+      run: |
+        cd $GITHUB_WORKSPACE
+        git clone -b main https://github.com/moruiris/Actions-OpenWrt.git main
+    - name: config文件上传自动更新3
+      env: 
+        ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+      run: |
+        cp openwrt/.config $GITHUB_WORKSPACE/main/${{ env.OPENWRT_NAME }}/${{ env.OPENWRT_NAME1 }}/.config
+        cd $GITHUB_WORKSPACE/main
+        git add .
+        git commit -am "update $(date +%Y-%m-%d" "%H:%M:%S)"
+        git push --quiet "https://${{ secrets.ACCESS_TOKEN }}@github.com/moruiris/Actions-OpenWrt.git" HEAD:main
+        
