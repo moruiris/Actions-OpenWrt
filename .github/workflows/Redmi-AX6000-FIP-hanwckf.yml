@@ -30,6 +30,7 @@ env:
   TZ: Asia/Shanghai
   ###############改名字##############
   OPENWRT_NAME: hanwckf
+  DEVICE_NAME: redmi_ax6000-fip
 
 jobs:
   build:
