@@ -39,6 +39,7 @@ git clone https://github.com/x-wrt/x-wrt
 ## Redmi AX6000 不死ubootmod
 - HZFrodo-[HZFrodo/uboot-mediatek: add support for Xiaomi Redmi Router AX6000](https://github.com/openwrt/openwrt/commit/1613e3340b829ea9aa6da954bf0ff98214b71751).
 
+
 ### 感谢名单（向他们学习才有这个项目）
 - [P3TERX](https://github.com/P3TERX/Actions-OpenWrt)
 [Read the details in my blog (in Chinese) | 中文教程](https://p3terx.com/archives/build-openwrt-with-github-actions.html)
