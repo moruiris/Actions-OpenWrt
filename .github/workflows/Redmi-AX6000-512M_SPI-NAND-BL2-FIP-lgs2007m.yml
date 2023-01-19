@@ -11,7 +11,7 @@
 ###【【只用于红米AX6000改512MB闪存后编译BL2和FIP】】P###
 
 ###############改名字##############
-Redmi-AX6000-512M_SPI-NAND-BL2-FIP-lgs2007m
+name: Redmi-AX6000-512M_SPI-NAND-BL2-FIP-lgs2007m
 
 on:
   repository_dispatch:
