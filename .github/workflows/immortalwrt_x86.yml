@@ -154,4 +154,4 @@ jobs:
         git add .
         git commit -am "update $(date +%Y-%m-%d" "%H:%M:%S)"
         git push --quiet "https://${{ secrets.ACCESS_TOKEN }}@github.com/moruiris/Actions-OpenWrt.git" HEAD:main
-        
+        echo "status=success" >> $GITHUB_OUTPUT
