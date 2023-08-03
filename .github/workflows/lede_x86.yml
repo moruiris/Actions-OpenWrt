@@ -22,10 +22,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Remove unnecessary files
-      run: |
-        sudo rm -rf /usr/share/dotnet
-        sudo rm -rf "$AGENT_TOOLSDIRECTORY"
     - name: 检查项目分支
       uses: actions/checkout@main
 
