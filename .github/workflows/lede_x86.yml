@@ -156,7 +156,11 @@ jobs:
       run: |
         cp openwrt/.config $GITHUB_WORKSPACE/main/${{ env.OPENWRT_NAME }}/${{ env.OPENWRT_NAME1 }}/.config
         cd $GITHUB_WORKSPACE/main
-        git add .
-        git commit -am "update $(date +%Y-%m-%d" "%H:%M:%S)"
-        git push --quiet "https://${{ secrets.ACCESS_TOKEN }}@github.com/moruiris/Actions-OpenWrt.git" HEAD:main
-        exit 0
+        if git status --porcelain | grep .; then
+          git add .
+          git commit -am "update $(date +%Y-%m-%d" "%H:%M:%S)"
+          git push --quiet "https://${{ secrets.ACCESS_TOKEN }}@github.com/moruiris/Actions-OpenWrt.git" HEAD:main
+        else
+          echo "nothing to commit"
+          exit 0
+        fi || exit 0
