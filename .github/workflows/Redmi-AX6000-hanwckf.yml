@@ -8,7 +8,7 @@
 # Description: Build OpenWrt using GitHub Actions
 #
 ###############改名字##############
-name: Redmi-AX6000-hanwckf
+name: Redmi-AX6000
 
 on:
   repository_dispatch:
@@ -26,8 +26,6 @@ env:
   REPO_BRANCH: openwrt-21.02
   FEEDS_CONF: feeds.conf.default
   CONFIG_FILE: hanwckf/Redmi-AX6000/.config
-  DIY_P1_SH: hanwckf/Redmi-AX6000/diy-part1.sh
-  DIY_P2_SH: hanwckf/Redmi-AX6000/diy-part2.sh
   SSH_ACTIONS: false
   UPLOAD_FIRMWARE: true
   UPLOAD_RELEASE: true
