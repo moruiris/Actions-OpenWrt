@@ -13,7 +13,7 @@ env:
   REPO_URL: https://github.com/hanwckf/immortalwrt-mt798x 
   REPO_BRANCH: openwrt-21.02
   FEEDS_CONF: feeds.conf.default
-  CONFIG_FILE: .config
+  CONFIG_FILE: hanwckf/Redmi-AX6000/.config
   TZ: Asia/Shanghai
   DEVICE: RedemeAX6000
   UPLOAD_OUTPUT: true
