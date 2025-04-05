@@ -77,9 +77,9 @@ jobs:
         git clone $REPO_URL -b $REPO_BRANCH openwrt
 
     - name: 执行DIY_P1_SH修改feeds.conf.default
-      working-directory: ./openwrt
       run: |
         chmod +x $DIY_P1_SH
+        cd openwrt
         $GITHUB_WORKSPACE/$DIY_P1_SH
 
     - name: 更新 & 安装 feeds
@@ -89,10 +89,10 @@ jobs:
         ./scripts/feeds install -a
 
     - name: 加载config & DIY_P2_SH
-      working-directory: ./openwrt
       run: |
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE ./.config
         chmod +x $DIY_P2_SH
+        cd openwrt
         $GITHUB_WORKSPACE/$DIY_P2_SH
 
     - name: 生成自定义config
