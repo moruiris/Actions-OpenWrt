@@ -3,6 +3,7 @@ name: Openwrt_x86
 on:
   schedule:
     - cron: 0 16 * * *
+  workflow_dispatch:
 
 env:
   REPO_URL: https://github.com/openwrt/openwrt
