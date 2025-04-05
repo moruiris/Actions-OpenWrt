@@ -21,10 +21,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    steps:
-    - name: 检查项目分支
-      uses: actions/checkout@main
-
     - name: 释放Ubuntu磁盘空间
       uses: jlumbroso/free-disk-space@main
       with:
@@ -39,6 +35,10 @@ jobs:
         large-packages: true
         docker-images: true
         swap-storage: true
+
+    steps:
+    - name: 检查项目分支
+      uses: actions/checkout@main
 
     - name: 初始化编译环境
       env:
