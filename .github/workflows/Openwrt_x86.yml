@@ -62,7 +62,6 @@ jobs:
         sudo -E apt clean
 
     - name: 更新时区、编译时间
-      id: date
       run: |
         sudo timedatectl set-timezone "$TZ"
         echo "FILE_TIME=$(date +"%m-%d %H.%M")" >> $GITHUB_ENV
@@ -88,16 +87,16 @@ jobs:
         ./scripts/feeds update -a
         ./scripts/feeds install -a
 
-    - name: 加载config & DIY_P2_SH
+    - name: 执行DIY_P2_SH
       run: |
-        [ -e $CONFIG_FILE ] && mv $CONFIG_FILE ./.config
         chmod +x $DIY_P2_SH
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P2_SH
 
-    - name: 生成自定义config
-      working-directory: ./openwrt
+    - name: 加载并生成自定义config
       run: |
+        [ -e $CONFIG_FILE ] && mv $CONFIG_FILE ./openwrt/.config
+        cd openwrt
         make defconfig
 
     - name: 下载编译所需文件
