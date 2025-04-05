@@ -95,7 +95,7 @@ jobs:
 
     - name: 加载并生成自定义config
       run: |
-        [ -e $CONFIG_FILE ] && mv $CONFIG_FILE ./openwrt/.config
+        [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
         cd openwrt
         make defconfig
 
