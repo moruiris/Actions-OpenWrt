@@ -22,23 +22,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: 释放Ubuntu磁盘空间
-      uses: jlumbroso/free-disk-space@main
-      with:
-        # this might remove tools that are actually needed,
-        # if set to "true" but frees about 6 GB
-        tool-cache: true
-        # all of these default to true, but feel free to set to
-        # "false" if necessary for your workflow
-        android: true
-        dotnet: true
-        haskell: true
-        large-packages: true
-        docker-images: true
-        swap-storage: true
-
     - name: 检查项目分支
       uses: actions/checkout@main
+
+    - name: 释放Ubuntu磁盘空间
+      uses: easimon/maximize-build-space@master
+      with:
+        root-reserve-mb: 512
+        swap-size-mb: 1024
+        remove-dotnet: 'true'
 
     - name: 初始化编译环境
       env:
