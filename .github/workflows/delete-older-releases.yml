@@ -8,15 +8,8 @@ jobs:
   del_runs:
     runs-on: ubuntu-latest
     steps:
-    
-    - name: 删除工作流
-      uses: GitRML/delete-workflow-runs@main
-      with:
-        retain_days: 7
-        keep_minimum_runs: 0
-    
     - name: 删除旧的Releases
-      uses: dev-drprasad/delete-older-releases@v0.2.0
+      uses: dev-drprasad/delete-older-releases@master
       with:
         keep_latest: 30
         delete_tags: true
