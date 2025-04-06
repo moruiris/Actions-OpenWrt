@@ -23,9 +23,6 @@ jobs:
     if: github.event.repository.owner.id == github.event.sender.id
     steps:
 
-    - name: 检查项目分支
-      uses: actions/checkout@main
-
     - name: 释放Ubuntu磁盘空间
       uses: coder-xiaomo/free-disk-space@main
       with:
@@ -36,6 +33,9 @@ jobs:
         large-packages: true
         docker-images: true
         swap-storage: true
+
+    - name: 加载项目文件
+      uses: actions/checkout@main
 
     - name: 初始化编译环境
       env:
@@ -59,7 +59,9 @@ jobs:
          
     - name: 执行DIY_P1_SH
       run: |
-        chmod +x $DIY_P1_SH && $DIY_P1_SH
+        chmod +x $DIY_P1_SH
+        cd openwrt
+        $GITHUB_WORKSPACE/$DIY_P1_SH
         
     - name: 更新feeds
       working-directory: ./openwrt
@@ -69,8 +71,9 @@ jobs:
     - name: 加载config 执行DIY_P2_SH defconfig
       run: |
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
-        chmod +x $DIY_P2_SH && $DIY_P2_SH
+        chmod +x $DIY_P2_SH
         cd openwrt
+        $GITHUB_WORKSPACE/$DIY_P2_SH
         ./scripts/feeds update -a && ./scripts/feeds install -a
         make defconfig
 
