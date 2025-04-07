@@ -164,7 +164,7 @@ jobs:
       env: 
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
       run: |
-        cp ./openwrt/.config $GITHUB_WORKSPACE/main/${{ CONFIG_FILE }}
+        cp ./openwrt/.config $GITHUB_WORKSPACE/main/$CONFIG_FILE
         cd $GITHUB_WORKSPACE/main
         if git status --porcelain | grep .; then
           git add .
