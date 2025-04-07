@@ -92,6 +92,7 @@ jobs:
         make -j$(nproc) || make -j1 || make -j1 V=s
 
     - name: 查看磁盘使用情况
+      if: env.UPLOAD_FIRMWARE == 'true'
       run: df -hT
 
     - name: 设置文件命名和当前的日期
