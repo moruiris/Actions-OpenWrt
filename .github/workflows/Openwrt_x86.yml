@@ -11,8 +11,6 @@ env:
   CONFIG_FILE: Openwrt/x86/.config
   DIY_P1_SH: Openwrt/diy-part1.sh
   DIY_P2_SH: Openwrt/diy-part2.sh
-  OPENWRT_NAME: Openwrt
-  OPENWRT_NAME1: x86
   UPLOAD_BIN: true
   UPLOAD_FIRMWARE: true
   UPLOAD_RELEASE: true
