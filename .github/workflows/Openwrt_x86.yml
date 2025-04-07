@@ -131,24 +131,23 @@ jobs:
         name: firmware_${{ env.DEVICE_NAME }}_${{ env.date1 }}
         path: ${{ env.FIRMWARE }}
 
-    - name: 生成release标签
-      id: tag
+    - name: 生成release描述
+      id: release
       if: steps.organize.outputs.status == 'success' && env.UPLOAD_RELEASE == 'true'
       run: |
-        echo "release_tag=${date2}" >> $GITHUB_OUTPUT
         touch release.txt
         echo "由衷感谢所有为openwrt无私奉献的大佬们" >> release.txt
         echo "📥 固件下载" >> release.txt
 
     - name: 发布至release
       uses: softprops/action-gh-release@master
-      if: steps.tag.outputs.status == 'success'
+      if: steps.release.outputs.status == 'success'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         files: ${{ env.FIRMWARE }}/*
         name: ${{ env.date3 }}
-        tag_name: ${{ steps.tag.outputs.release_tag }}
+        tag_name: ${{ env.date2 }}
         body_path: release.txt
 
     - name: config文件上传自动更新1
@@ -166,14 +165,13 @@ jobs:
         cp ./openwrt/.config $GITHUB_WORKSPACE/main/$CONFIG_FILE
         cp ./openwrt/bin/targets/*/*/config.buildinfo $GITHUB_WORKSPACE/main/$CONFIG_BUILD
         cd $GITHUB_WORKSPACE/main
-        if git status --porcelain | grep .; then
-          git add .
+        git add .
+        if git diff --cached --quiet; then
+          echo "nothing to commit"
+        else
           git commit -am "update $(date '+%Y-%m-%d %H:%M:%S')"
           git push --quiet "https://x-access-token:${GITHUB_TOKEN}@github.com/${REPO}.git" HEAD:main
-        else   
-          echo "nothing to commit"
-          exit 0
-        fi || exit 0
+        fi
 
     - name: 查看磁盘使用情况
       if: (!cancelled())
