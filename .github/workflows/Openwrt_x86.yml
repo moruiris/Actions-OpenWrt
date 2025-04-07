@@ -10,7 +10,7 @@ env:
   REPO_URL: https://github.com/openwrt/openwrt
   REPO_BRANCH: main
   CONFIG_FILE: Openwrt/x86/.config
-  BUILD_CONFIG_FILE: Openwrt/x86/build.config
+  CONFIG_BUILD: Openwrt/x86/config.buildinfo
   DIY_P1_SH: Openwrt/diy-part1.sh
   DIY_P2_SH: Openwrt/diy-part2.sh
   UPLOAD_BIN: true
@@ -72,7 +72,7 @@ jobs:
 
     - name: 加载config 执行DIY_P2_SH defconfig
       run: |
-        [ -e $BUILD_CONFIG_FILE ] && mv $BUILD_CONFIG_FILE openwrt/.config
+        [ -e $CONFIG_BUILD ] && mv $CONFIG_BUILD openwrt/.config
         chmod +x $DIY_P2_SH
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P2_SH
@@ -164,7 +164,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         cp ./openwrt/.config $GITHUB_WORKSPACE/main/$CONFIG_FILE
-        cp ./openwrt/bin/targets/*/*/config.buildinfo $GITHUB_WORKSPACE/main/$BUILD_CONFIG_FILE
+        cp ./openwrt/bin/targets/*/*/config.buildinfo $GITHUB_WORKSPACE/main/$CONFIG_BUILD
         cd $GITHUB_WORKSPACE/main
         if git status --porcelain | grep .; then
           git add .
