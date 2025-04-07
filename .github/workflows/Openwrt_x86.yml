@@ -11,18 +11,19 @@ env:
   CONFIG_FILE: Openwrt/x86/.config
   DIY_P1_SH: Openwrt/diy-part1.sh
   DIY_P2_SH: Openwrt/diy-part2.sh
+  OPENWRT_NAME: Openwrt
+  OPENWRT_NAME1: x86
+  UPLOAD_BIN: true
   UPLOAD_FIRMWARE: true
   UPLOAD_RELEASE: true
   TZ: Asia/Shanghai
-  OPENWRT_NAME: Openwrt
-  OPENWRT_NAME1: x86
 
 jobs:
   build:
     runs-on: ubuntu-latest
     if: github.event.repository.owner.id == github.event.sender.id
-    steps:
 
+    steps:
     - name: 释放Ubuntu磁盘空间
       uses: coder-xiaomo/free-disk-space@main
       with:
@@ -52,21 +53,22 @@ jobs:
         python3-pyelftools qemu-utils re2c rsync scons squashfs-tools subversion swig texinfo uglifyjs \
         upx-ucl unzip vim wget xmlto xxd zlib1g-dev zstd
         sudo timedatectl set-timezone "$TZ"
-        
+
     - name: 下载固件源码
       run: |
         git clone $REPO_URL -b $REPO_BRANCH openwrt
-         
+
     - name: 执行DIY_P1_SH
       run: |
         chmod +x $DIY_P1_SH
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P1_SH
-        
+
     - name: 更新feeds
       working-directory: ./openwrt
       run: |
         ./scripts/feeds update -a
+        ./scripts/feeds install -a
 
     - name: 加载config 执行DIY_P2_SH defconfig
       run: |
@@ -83,63 +85,67 @@ jobs:
         make download -j$(nproc)
         find dl -size -1024c -exec ls -l {} \;
         find dl -size -1024c -exec rm -f {} \;
-        
+
     - name: 编译固件
       id: compile
       working-directory: ./openwrt
       run: |
         echo -e "$(nproc) thread compile"
         make -j$(nproc) || make -j1 || make -j1 V=s
-              
-    - name: 设置当前的日期
+
+    - name: 查看磁盘使用情况
+      run: df -hT
+
+    - name: 设置文件命名和当前的日期
+      working-directory: ./openwrt
       run: |
-        cd openwrt
         grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/' > DEVICE_NAME
         [ -s DEVICE_NAME ] && echo "DEVICE_NAME=$(cat DEVICE_NAME)" >> $GITHUB_ENV
         echo "date1=$(date +'%Y.%m.%d-%H.%M')" >> $GITHUB_ENV
         echo "date2=$(date +'%Y.%m.%d')" >> $GITHUB_ENV
         echo "date3=$(date "+%Y年%m月%d日")" >> $GITHUB_ENV
-        
-    - name: 查看磁盘使用情况
-      if: (!cancelled())
-      run: df -hT
 
-    - name: 整理文件并重命名
+    - name: 上传bin目录文件
+      uses: actions/upload-artifact@main
+      if: steps.compile.outputs.status == 'success' && env.UPLOAD_BIN == 'true'
+      with:
+        name: OpenWrt_bin${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
+        path: openwrt/bin
+
+    - name: 整理文件到firmware目录
       id: organize
-      if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
+      if: steps.compile.outputs.status == 'success'
       run: | 
         mkdir firmware && find openwrt/bin/targets/*/*/ -maxdepth 1 \
         -name "*squashfs-combined.vmdk" \
-        -or -name "*squashfs-combined.img.gz" \
-        | xargs -i mv -f {} ./firmware/
-        cp openwrt/.config ./firmware/${{ env.date1 }}_${{ env.OPENWRT_NAME }}_x86-64.config
+        -or -name "*quashfs-combined.img.gz" \
+        | xargs -i cp {} ./firmware/
+        cp ./openwrt/bin/targets/*/*/config.buildinfo ./firmware/${{ env.date1 }}_${{ env.DEVICE_NAME }}_x86-64.config
         cd firmware
         sudo -E apt-get -qq install rename
-        rename 's/^/${{ env.date1 }}_${{ env.OPENWRT_NAME }}_/' *.vmdk
-        rename 's/^/${{ env.date1 }}_${{ env.OPENWRT_NAME }}_/' *.img.gz
+        rename 's/^/${{ env.date1 }}_${{ env.DEVICE_NAME }}_/' *.vmdk
+        rename 's/^/${{ env.date1 }}_${{ env.DEVICE_NAME }}_/' *.img.gz
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
-        echo "status=success" >> $GITHUB_OUTPUT
-      
-    - name: 上传固件到github
+
+    - name: 上传firmware目录文件
       uses: actions/upload-artifact@main
-      if: steps.organize.outputs.status == 'success' && !cancelled()
+      if: steps.organize.outputs.status == 'success' && env.UPLOAD_FIRMWARE == 'true'
       with:
-        name: ${{ env.date1 }}_${{ env.OPENWRT_NAME }}_${{ env.DEVICE_NAME }}
+        name: ${{ env.date1 }}_${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
         path: ${{ env.FIRMWARE }}
 
     - name: 生成release标签
       id: tag
-      if: env.UPLOAD_RELEASE == 'true' && !cancelled()
+      if: steps.organize.outputs.status == 'success' && env.UPLOAD_RELEASE == 'true'
       run: |
-        echo "::set-output name=release_tag::${{ env.date2 }}"
+        echo "release_tag=${{ env.date2 }}" >> $GITHUB_OUTPUT
         touch release.txt
         echo "由衷感谢所有为openwrt无私奉献的大佬们" >> release.txt
         echo "📥 固件下载" >> release.txt
-        echo "status=success" >> $GITHUB_OUTPUT
-        
+
     - name: 发布至release
-      uses: softprops/action-gh-release@v1
-      if: steps.tag.outputs.status == 'success' && !cancelled()
+      uses: softprops/action-gh-release@master
+      if: steps.tag.outputs.status == 'success'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
@@ -152,7 +158,6 @@ jobs:
       run : |
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config --global user.name "github-actions[bot]"
-        sudo timedatectl set-timezone "Asia/Shanghai"
     - name: config文件上传自动更新2
       run: |
         cd $GITHUB_WORKSPACE
@@ -161,7 +166,7 @@ jobs:
       env: 
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
       run: |
-        cp openwrt/.config $GITHUB_WORKSPACE/main/${{ env.OPENWRT_NAME }}/${{ env.OPENWRT_NAME1 }}/.config
+        cp ./openwrt/.config $GITHUB_WORKSPACE/main/${{ CONFIG_FILE }}
         cd $GITHUB_WORKSPACE/main
         if git status --porcelain | grep .; then
           git add .
