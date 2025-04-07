@@ -103,7 +103,7 @@ jobs:
         echo "date3=$(date "+%Y年%m月%d日")" >> $GITHUB_ENV
 
     - name: 上传bin目录文件
-      if: steps.compile.status == 'success' && env.UPLOAD_BIN == 'true'
+      if: steps.compile.conclusion == 'success' && env.UPLOAD_BIN == 'true'
       uses: actions/upload-artifact@main
       with:
         name: bin_${{ env.DEVICE_NAME }}_${{ env.date1 }}
@@ -111,7 +111,7 @@ jobs:
 
     - name: 整理文件到firmware目录
       id: organize
-      if: steps.compile.status == 'success'
+      if: steps.compile.conclusion == 'success'
       run: | 
         mkdir firmware && find openwrt/bin/targets/*/*/ -maxdepth 1 \
         -name "*squashfs-combined.vmdk" \
@@ -125,7 +125,7 @@ jobs:
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
 
     - name: 上传firmware目录文件
-      if: steps.organize.status == 'success' && env.UPLOAD_FIRMWARE == 'true'
+      if: steps.organize.conclusion == 'success' && env.UPLOAD_FIRMWARE == 'true'
       uses: actions/upload-artifact@main
       with:
         name: firmware_${{ env.DEVICE_NAME }}_${{ env.date1 }}
@@ -133,14 +133,14 @@ jobs:
 
     - name: 生成release描述
       id: release
-      if: steps.organize.status == 'success' && env.UPLOAD_RELEASE == 'true'
+      if: steps.organize.conclusion == 'success' && env.UPLOAD_RELEASE == 'true'
       run: |
         touch release.txt
         echo "由衷感谢所有为openwrt无私奉献的大佬们" >> release.txt
         echo "📥 固件下载" >> release.txt
 
     - name: 发布至release
-      if: steps.release.status == 'success'
+      if: steps.release.conclusion == 'success'
       uses: softprops/action-gh-release@master
       with:
         files: ${{ env.FIRMWARE }}/*
@@ -150,6 +150,7 @@ jobs:
 
     - name: config文件上传自动更新1
       run : |
+        echo "编译状态: ${{ steps.compile.conclusion }}"
         echo "编译状态: ${{ steps.compile.status }}"
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config --global user.name "github-actions[bot]"
