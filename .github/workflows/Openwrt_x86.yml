@@ -6,9 +6,11 @@ on:
   workflow_dispatch:
 
 env:
+  REPO: moruiris/Actions-OpenWrt
   REPO_URL: https://github.com/openwrt/openwrt
   REPO_BRANCH: main
   CONFIG_FILE: Openwrt/x86/.config
+  BUILD_CONFIG_FILE: Openwrt/x86/build.config
   DIY_P1_SH: Openwrt/diy-part1.sh
   DIY_P2_SH: Openwrt/diy-part2.sh
   UPLOAD_BIN: true
@@ -70,7 +72,7 @@ jobs:
 
     - name: 加载config 执行DIY_P2_SH defconfig
       run: |
-        [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
+        [ -e $BUILD_CONFIG_FILE ] && mv $BUILD_CONFIG_FILE openwrt/.config
         chmod +x $DIY_P2_SH
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P2_SH
@@ -90,10 +92,6 @@ jobs:
       run: |
         echo -e "$(nproc) thread compile"
         make -j$(nproc) || make -j1 || make -j1 V=s
-
-    - name: 查看磁盘使用情况
-      if: env.UPLOAD_FIRMWARE == 'true'
-      run: df -hT
 
     - name: 设置文件命名和当前的日期
       working-directory: ./openwrt
@@ -160,21 +158,26 @@ jobs:
     - name: config文件上传自动更新2
       run: |
         cd $GITHUB_WORKSPACE
-        git clone -b main https://github.com/moruiris/Actions-OpenWrt.git main
+        git clone -b main https://github.com/${REPO}.git main
     - name: config文件上传自动更新3
       env: 
-        ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         cp ./openwrt/.config $GITHUB_WORKSPACE/main/$CONFIG_FILE
+        cp ./openwrt/bin/targets/*/*/config.buildinfo $GITHUB_WORKSPACE/main/$BUILD_CONFIG_FILE
         cd $GITHUB_WORKSPACE/main
         if git status --porcelain | grep .; then
           git add .
-          git commit -am "update $(date +%Y-%m-%d" "%H:%M:%S)"
-          git push --quiet "https://${ACCESS_TOKEN}@github.com/moruiris/Actions-OpenWrt.git" HEAD:main
+          git commit -am "update $(date '+%Y-%m-%d %H:%M:%S')"
+          git push --quiet "https://x-access-token:${GITHUB_TOKEN}@github.com/${REPO}.git" HEAD:main
         else   
           echo "nothing to commit"
           exit 0
         fi || exit 0
+
+    - name: 查看磁盘使用情况
+      if: (!cancelled())
+      run: df -hT
 
     - name: 删除工作流
       uses: Mattraks/delete-workflow-runs@main
