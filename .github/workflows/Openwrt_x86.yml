@@ -104,14 +104,14 @@ jobs:
 
     - name: 上传bin目录文件
       uses: actions/upload-artifact@main
-      if: steps.compile.outputs.status == 'success' && env.UPLOAD_BIN == 'true'
+      if: steps.compile.status == 'success' && env.UPLOAD_BIN == 'true'
       with:
         name: bin_${{ env.DEVICE_NAME }}_${{ env.date1 }}
         path: openwrt/bin
 
     - name: 整理文件到firmware目录
       id: organize
-      if: steps.compile.outputs.status == 'success'
+      if: steps.compile.status == 'success'
       run: | 
         mkdir firmware && find openwrt/bin/targets/*/*/ -maxdepth 1 \
         -name "*squashfs-combined.vmdk" \
@@ -126,14 +126,14 @@ jobs:
 
     - name: 上传firmware目录文件
       uses: actions/upload-artifact@main
-      if: steps.organize.outputs.status == 'success' && env.UPLOAD_FIRMWARE == 'true'
+      if: steps.organize.status == 'success' && env.UPLOAD_FIRMWARE == 'true'
       with:
         name: firmware_${{ env.DEVICE_NAME }}_${{ env.date1 }}
         path: ${{ env.FIRMWARE }}
 
     - name: 生成release描述
       id: release
-      if: steps.organize.outputs.status == 'success' && env.UPLOAD_RELEASE == 'true'
+      if: steps.organize.status == 'success' && env.UPLOAD_RELEASE == 'true'
       run: |
         touch release.txt
         echo "由衷感谢所有为openwrt无私奉献的大佬们" >> release.txt
@@ -141,7 +141,7 @@ jobs:
 
     - name: 发布至release
       uses: softprops/action-gh-release@master
-      if: steps.release.outputs.status == 'success'
+      if: steps.release.status == 'success'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
