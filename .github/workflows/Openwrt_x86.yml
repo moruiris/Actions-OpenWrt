@@ -159,8 +159,6 @@ jobs:
         cd $GITHUB_WORKSPACE
         git clone -b main https://github.com/${REPO}.git main
     - name: config文件上传自动更新3
-      env: 
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         cp ./openwrt/.config $GITHUB_WORKSPACE/main/$CONFIG_FILE
         cp ./openwrt/bin/targets/*/*/config.buildinfo $GITHUB_WORKSPACE/main/$CONFIG_BUILD
@@ -170,7 +168,7 @@ jobs:
           echo "nothing to commit"
         else
           git commit -am "update $(date '+%Y-%m-%d %H:%M:%S')"
-          git push --quiet "https://x-access-token:${GITHUB_TOKEN}@github.com/${REPO}.git" HEAD:main
+          git push --quiet "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${REPO}.git" HEAD:${BRANCH}
         fi
 
     - name: 查看磁盘使用情况
