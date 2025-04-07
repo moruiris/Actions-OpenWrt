@@ -119,7 +119,7 @@ jobs:
         | xargs -i cp {} ./firmware/
         cp ./openwrt/bin/targets/*/*/config.buildinfo ./firmware/${date1}_${DEVICE_NAME}.config
         cd firmware
-        sudo -E apt-get -qq install rename
+        sudo apt install -y rename
         rename 's/^/${date1}_${DEVICE_NAME}_/' *.vmdk
         rename 's/^/${date1}_${DEVICE_NAME}_/' *.img.gz
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
