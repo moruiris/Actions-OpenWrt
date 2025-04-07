@@ -103,8 +103,8 @@ jobs:
         echo "date3=$(date "+%Y年%m月%d日")" >> $GITHUB_ENV
 
     - name: 上传bin目录文件
-      uses: actions/upload-artifact@main
       if: steps.compile.status == 'success' && env.UPLOAD_BIN == 'true'
+      uses: actions/upload-artifact@main
       with:
         name: bin_${{ env.DEVICE_NAME }}_${{ env.date1 }}
         path: openwrt/bin
@@ -125,8 +125,8 @@ jobs:
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
 
     - name: 上传firmware目录文件
-      uses: actions/upload-artifact@main
       if: steps.organize.status == 'success' && env.UPLOAD_FIRMWARE == 'true'
+      uses: actions/upload-artifact@main
       with:
         name: firmware_${{ env.DEVICE_NAME }}_${{ env.date1 }}
         path: ${{ env.FIRMWARE }}
@@ -140,10 +140,8 @@ jobs:
         echo "📥 固件下载" >> release.txt
 
     - name: 发布至release
-      uses: softprops/action-gh-release@master
       if: steps.release.status == 'success'
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@master
       with:
         files: ${{ env.FIRMWARE }}/*
         name: ${{ env.date3 }}
