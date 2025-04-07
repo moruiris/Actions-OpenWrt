@@ -108,7 +108,7 @@ jobs:
       uses: actions/upload-artifact@main
       if: steps.compile.outputs.status == 'success' && env.UPLOAD_BIN == 'true'
       with:
-        name: OpenWrt_bin${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
+        name: bin_${{ env.DEVICE_NAME }}_${{ env.date1 }}
         path: openwrt/bin
 
     - name: 整理文件到firmware目录
@@ -119,25 +119,25 @@ jobs:
         -name "*squashfs-combined.vmdk" \
         -or -name "*quashfs-combined.img.gz" \
         | xargs -i cp {} ./firmware/
-        cp ./openwrt/bin/targets/*/*/config.buildinfo ./firmware/${{ env.date1 }}_${{ env.DEVICE_NAME }}_x86-64.config
+        cp ./openwrt/bin/targets/*/*/config.buildinfo ./firmware/${date1}_${DEVICE_NAME}.config
         cd firmware
         sudo -E apt-get -qq install rename
-        rename 's/^/${{ env.date1 }}_${{ env.DEVICE_NAME }}_/' *.vmdk
-        rename 's/^/${{ env.date1 }}_${{ env.DEVICE_NAME }}_/' *.img.gz
+        rename 's/^/${date1}_${DEVICE_NAME}_/' *.vmdk
+        rename 's/^/${date1}_${DEVICE_NAME}_/' *.img.gz
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
 
     - name: 上传firmware目录文件
       uses: actions/upload-artifact@main
       if: steps.organize.outputs.status == 'success' && env.UPLOAD_FIRMWARE == 'true'
       with:
-        name: ${{ env.date1 }}_${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
+        name: firmware_${{ env.DEVICE_NAME }}_${{ env.date1 }}
         path: ${{ env.FIRMWARE }}
 
     - name: 生成release标签
       id: tag
       if: steps.organize.outputs.status == 'success' && env.UPLOAD_RELEASE == 'true'
       run: |
-        echo "release_tag=${{ env.date2 }}" >> $GITHUB_OUTPUT
+        echo "release_tag=${date2}" >> $GITHUB_OUTPUT
         touch release.txt
         echo "由衷感谢所有为openwrt无私奉献的大佬们" >> release.txt
         echo "📥 固件下载" >> release.txt
@@ -170,7 +170,7 @@ jobs:
         if git status --porcelain | grep .; then
           git add .
           git commit -am "update $(date +%Y-%m-%d" "%H:%M:%S)"
-          git push --quiet "https://${{ secrets.ACCESS_TOKEN }}@github.com/moruiris/Actions-OpenWrt.git" HEAD:main
+          git push --quiet "https://${ACCESS_TOKEN}@github.com/moruiris/Actions-OpenWrt.git" HEAD:main
         else   
           echo "nothing to commit"
           exit 0
