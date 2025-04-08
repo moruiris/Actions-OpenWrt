@@ -1,9 +1,9 @@
 name: Openwrt_x86
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: 0 16 * * *
-  workflow_dispatch:
 
 env:
   OPENWRT_NAME: Openwrt
@@ -179,8 +179,9 @@ jobs:
       if: (!cancelled())
       run: df -hT
 
-    - name: 删除工作流
-      uses: Mattraks/delete-workflow-runs@main
+    - name: delete-older-workflow
+      uses: Mattraks/delete-workflow-runs@v2
       with:
+        delete_workflow_pattern: ${{ github.workflow }}
         retain_days: 7
         keep_minimum_runs: 0
