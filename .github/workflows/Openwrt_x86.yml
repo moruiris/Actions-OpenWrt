@@ -152,7 +152,6 @@ jobs:
     - name: config文件上传自动更新1
       run : |
         echo "编译状态: ${{ steps.compile.conclusion }}"
-        echo "编译状态: ${{ steps.compile.status }}"
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config --global user.name "github-actions[bot]"
     - name: config文件上传自动更新2
