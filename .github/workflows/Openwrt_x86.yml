@@ -179,8 +179,8 @@ jobs:
       if: (!cancelled())
       run: df -hT
 
-    - name: delete-older-workflow
-      uses: Mattraks/delete-workflow-runs@v2
+    - name: 删除工作流
+      uses: Mattraks/delete-workflow-runs@main
       with:
         delete_workflow_pattern: ${{ github.workflow }}
         retain_days: 7
