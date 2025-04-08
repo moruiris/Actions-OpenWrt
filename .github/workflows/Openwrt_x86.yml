@@ -126,8 +126,8 @@ jobs:
         cp -v ./openwrt/.config  ./firmware/${date1}_${OPENWRT_NAME}_${DEVICE_NAME}.config
         cd firmware
         sudo apt-get install -y rename
-        rename -v 's/^/${date1}_${DEVICE_NAME}_/' *.vmdk
-        rename -v 's/^/${date1}_${DEVICE_NAME}_/' *.img.gz
+        rename -v 's/^/${{ date1 }}_${{ DEVICE_NAME }}_/' *.vmdk
+        rename -v 's/^/${{ date1 }}_${{ DEVICE_NAME }}_/' *.img.gz
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
 
     - name: 上传firmware目录文件
