@@ -22,8 +22,8 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:
 
+    steps:
     - name: 释放Ubuntu磁盘空间
       uses: coder-xiaomo/free-disk-space@main
       with:
