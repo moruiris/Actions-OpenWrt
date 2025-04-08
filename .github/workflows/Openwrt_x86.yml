@@ -1,5 +1,4 @@
 name: Openwrt_x86
-
 on:
   workflow_dispatch:
   schedule:
@@ -23,7 +22,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     if: github.event.repository.owner.id == github.event.sender.id
-
     steps:
     - name: 释放Ubuntu磁盘空间
       uses: coder-xiaomo/free-disk-space@main
@@ -35,10 +33,8 @@ jobs:
         large-packages: true
         docker-images: true
         swap-storage: true
-
     - name: 加载项目文件
       uses: actions/checkout@main
-
     - name: 初始化编译环境
       env:
         DEBIAN_FRONTEND: noninteractive
@@ -53,23 +49,21 @@ jobs:
         ninja-build p7zip p7zip-full patch pkgconf python3 python3-pip python3-ply python3-docutils \
         python3-pyelftools qemu-utils re2c rsync scons squashfs-tools subversion swig texinfo uglifyjs \
         upx-ucl unzip vim wget xmlto xxd zlib1g-dev zstd
-
     - name: 设置当前的日期
       run: |
         sudo timedatectl set-timezone "$TZ"
         echo "date1=$(date +'%Y.%m.%d-%H.%M')" >> $GITHUB_ENV
         echo "date2=$(date +'%Y.%m.%d')" >> $GITHUB_ENV
         echo "date3=$(date "+%Y年%m月%d日")" >> $GITHUB_ENV
-
     - name: 下载固件源码
       run: |
-        git clone $REPO_URL -b $REPO_BRANCH openwrt
+        git clone ${{ env.REPO_URL }} -b ${{ env.REPO_BRANCH }} openwrt
 
     - name: 执行DIY_P1_SH
       run: |
-        chmod +x $DIY_P1_SH
+        chmod +x ${{ env.DIY_P1_SH }}
         cd openwrt
-        $GITHUB_WORKSPACE/$DIY_P1_SH
+        $GITHUB_WORKSPACE/${{ env.DIY_P1_SH }}
 
     - name: 更新feeds
       working-directory: ./openwrt
@@ -79,10 +73,10 @@ jobs:
 
     - name: 加载config 执行DIY_P2_SH defconfig
       run: |
-        [ -e $CONFIG_BUILD ] && mv $CONFIG_BUILD openwrt/.config
-        chmod +x $DIY_P2_SH
+        [ -e ${{ env.CONFIG_BUILD}} ] && mv ${{ env.CONFIG_BUILD}} openwrt/.config
+        chmod +x ${{ env.DIY_P2_SH }}
         cd openwrt
-        $GITHUB_WORKSPACE/$DIY_P2_SH
+        $GITHUB_WORKSPACE/${{ env.DIY_P2_SH }}
         ./scripts/feeds update -a && ./scripts/feeds install -a
         make defconfig
 
@@ -107,7 +101,7 @@ jobs:
         [ -s DEVICE_NAME ] && echo "DEVICE_NAME=$(cat DEVICE_NAME)" >> $GITHUB_ENV
 
     - name: 上传bin目录文件
-      if: steps.compile.conclusion == 'success' && env.UPLOAD_BIN == 'true'
+      if: steps.compile.outcome == 'success' && env.UPLOAD_BIN == 'true'
       uses: actions/upload-artifact@main
       with:
         name: bin_${{ env.OPENWRT_NAME }}_${{ env.DEVICE_NAME }}_${{ env.date1 }}
@@ -115,15 +109,15 @@ jobs:
 
     - name: 整理文件到firmware目录
       id: organize
-      if: steps.compile.conclusion == 'success'
+      if: steps.compile.outcome == 'success'
       run: | 
         mkdir firmware
         find openwrt/bin/targets/*/*/ -maxdepth 1 \
         -name "*squashfs-combined.vmdk" \
         -or -name "*quashfs-combined.img.gz" \
         | xargs -i cp {} ./firmware/
-        cp -v ./openwrt/bin/targets/*/*/config.buildinfo ./firmware/${date1}_${OPENWRT_NAME}_${DEVICE_NAME}_config.buildinfo
-        cp -v ./openwrt/.config  ./firmware/${date1}_${OPENWRT_NAME}_${DEVICE_NAME}.config
+        cp -v ./openwrt/bin/targets/*/*/config.buildinfo ./firmware/${{ env.date1 }}_${{ env.OPENWRT_NAME }}_${{ env.DEVICE_NAME }}_config.buildinfo
+        cp -v ./openwrt/.config  ./firmware/${{ env.date1 }}_${{ env.OPENWRT_NAME }}_${{ env.DEVICE_NAME }}.config
         cd firmware
         sudo apt-get install -y rename
         rename -v 's/^/${{ env.date1 }}_${{ env.DEVICE_NAME }}_/' *.vmdk
@@ -131,7 +125,7 @@ jobs:
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
 
     - name: 上传firmware目录文件
-      if: steps.organize.conclusion == 'success' && env.UPLOAD_FIRMWARE == 'true'
+      if: steps.organize.outcome == 'success' && env.UPLOAD_FIRMWARE == 'true'
       uses: actions/upload-artifact@main
       with:
         name: firmware_${{ env.OPENWRT_NAME }}_${{ env.DEVICE_NAME }}_${{ env.date1 }}
@@ -139,14 +133,14 @@ jobs:
 
     - name: 生成release描述
       id: release
-      if: steps.organize.conclusion == 'success' && env.UPLOAD_RELEASE == 'true'
+      if: steps.organize.outcome == 'success' && env.UPLOAD_RELEASE == 'true'
       run: |
         touch release.txt
         echo "由衷感谢所有为openwrt无私奉献的大佬们" >> release.txt
         echo "📥 固件下载" >> release.txt
 
     - name: 发布至release
-      if: steps.release.conclusion == 'success'
+      if: steps.release.outcome == 'success'
       uses: softprops/action-gh-release@master
       with:
         files: ${{ env.FIRMWARE }}/*
@@ -161,18 +155,18 @@ jobs:
     - name: config文件上传自动更新2
       run: |
         cd $GITHUB_WORKSPACE
-        git clone -b main https://github.com/${REPO}.git main
+        git clone -b main https://github.com/${{ env.REPO }}.git main
     - name: config文件上传自动更新3
       run: |
-        cp ./openwrt/.config $GITHUB_WORKSPACE/main/$CONFIG_FILE
-        cp ./openwrt/bin/targets/*/*/config.buildinfo $GITHUB_WORKSPACE/main/$CONFIG_BUILD
+        cp ./openwrt/.config $GITHUB_WORKSPACE/main/${{ env.CONFIG_FILE }}
+        cp ./openwrt/bin/targets/*/*/config.buildinfo $GITHUB_WORKSPACE/main/${{ env.CONFIG_BUILD }}
         cd $GITHUB_WORKSPACE/main
         git add .
         if git diff --cached --quiet; then
           echo "nothing to commit"
         else
           git commit -am "update $(date '+%Y-%m-%d %H:%M:%S')"
-          git push --quiet "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${REPO}.git" HEAD:main
+          git push --quiet "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ env.REPO }}.git" HEAD:main
         fi
 
     - name: 查看磁盘使用情况
