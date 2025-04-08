@@ -83,7 +83,6 @@ jobs:
         chmod +x ${{ env.DIY_P2_SH }}
         cd openwrt
         $GITHUB_WORKSPACE/${{ env.DIY_P2_SH }}
-        ./scripts/feeds update -a && ./scripts/feeds install -a
         make defconfig
 
     - name: 下载安装包
