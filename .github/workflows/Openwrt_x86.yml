@@ -93,10 +93,10 @@ jobs:
         echo -e "$(nproc) thread compile"
         make -j$(nproc) || make -j1 || make -j1 V=s
 
-    - name: 设置文件命名和当前的日期
+    - name: 获取设备名字并设置当前的日期
       working-directory: ./openwrt
       run: |
-        grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/' > DEVICE_NAME
+        grep -ml '^CONFIG_TARGET_.*_DEVICE.*=y' .config | sed -nr 's/^CONFIG_TARGET_(.*)_DEVICE.*=y/\1/p' > DEVICE_NAME
         [ -s DEVICE_NAME ] && echo "DEVICE_NAME=$(cat DEVICE_NAME)" >> $GITHUB_ENV
         echo "date1=$(date +'%Y.%m.%d-%H.%M')" >> $GITHUB_ENV
         echo "date2=$(date +'%Y.%m.%d')" >> $GITHUB_ENV
@@ -113,13 +113,14 @@ jobs:
       id: organize
       if: steps.compile.conclusion == 'success'
       run: | 
-        mkdir firmware && find openwrt/bin/targets/*/*/ -maxdepth 1 \
+        mkdir firmware
+        find openwrt/bin/targets/*/*/ -maxdepth 1 \
         -name "*squashfs-combined.vmdk" \
         -or -name "*quashfs-combined.img.gz" \
         | xargs -i cp {} ./firmware/
-        cp ./openwrt/bin/targets/*/*/config.buildinfo ./firmware/${date1}_${DEVICE_NAME}.config
+        cp ./openwrt/bin/targets/*/*/config.buildinfo ./firmware/${date1}_${DEVICE_NAME}_config.buildinfo
+        cp ./openwrt/.config  ./firmware/${date1}_${DEVICE_NAME}.config
         cd firmware
-        sudo apt install -y rename
         rename 's/^/${date1}_${DEVICE_NAME}_/' *.vmdk
         rename 's/^/${date1}_${DEVICE_NAME}_/' *.img.gz
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
