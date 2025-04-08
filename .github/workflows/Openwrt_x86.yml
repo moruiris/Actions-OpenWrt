@@ -96,7 +96,7 @@ jobs:
     - name: 获取设备名字并设置当前的日期
       working-directory: ./openwrt
       run: |
-        grep -ml '^CONFIG_TARGET_.*_DEVICE.*=y' .config | sed -nr 's/^CONFIG_TARGET_(.*)_DEVICE.*=y/\1/p' > DEVICE_NAME
+        grep '^CONFIG_TARGET_.*_DEVICE.*=y' .config | sed -r 's/^CONFIG_TARGET_(.*)_DEVICE.*=y/\1/' > DEVICE_NAME
         [ -s DEVICE_NAME ] && echo "DEVICE_NAME=$(cat DEVICE_NAME)" >> $GITHUB_ENV
         echo "date1=$(date +'%Y.%m.%d-%H.%M')" >> $GITHUB_ENV
         echo "date2=$(date +'%Y.%m.%d')" >> $GITHUB_ENV
@@ -118,11 +118,12 @@ jobs:
         -name "*squashfs-combined.vmdk" \
         -or -name "*quashfs-combined.img.gz" \
         | xargs -i cp {} ./firmware/
-        cp ./openwrt/bin/targets/*/*/config.buildinfo ./firmware/${date1}_${DEVICE_NAME}_config.buildinfo
-        cp ./openwrt/.config  ./firmware/${date1}_${DEVICE_NAME}.config
+        cp -v ./openwrt/bin/targets/*/*/config.buildinfo ./firmware/${date1}_${DEVICE_NAME}_config.buildinfo
+        cp -v ./openwrt/.config  ./firmware/${date1}_${DEVICE_NAME}.config
         cd firmware
-        rename 's/^/${date1}_${DEVICE_NAME}_/' *.vmdk
-        rename 's/^/${date1}_${DEVICE_NAME}_/' *.img.gz
+        sudo apt install -y perl
+        rename -v 's/^/${date1}_${DEVICE_NAME}_/' *.vmdk
+        rename -v 's/^/${date1}_${DEVICE_NAME}_/' *.img.gz
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
 
     - name: 上传firmware目录文件
