@@ -6,6 +6,7 @@ on:
   workflow_dispatch:
 
 env:
+  OPENWRT_NAME: Openwrt
   REPO: moruiris/Actions-OpenWrt
   REPO_URL: https://github.com/openwrt/openwrt
   REPO_BRANCH: main
@@ -52,7 +53,13 @@ jobs:
         ninja-build p7zip p7zip-full patch pkgconf python3 python3-pip python3-ply python3-docutils \
         python3-pyelftools qemu-utils re2c rsync scons squashfs-tools subversion swig texinfo uglifyjs \
         upx-ucl unzip vim wget xmlto xxd zlib1g-dev zstd
+
+    - name: 设置当前的日期
+      run: |
         sudo timedatectl set-timezone "$TZ"
+        echo "date1=$(date +'%Y.%m.%d-%H.%M')" >> $GITHUB_ENV
+        echo "date2=$(date +'%Y.%m.%d')" >> $GITHUB_ENV
+        echo "date3=$(date "+%Y年%m月%d日")" >> $GITHUB_ENV
 
     - name: 下载固件源码
       run: |
@@ -93,20 +100,17 @@ jobs:
         echo -e "$(nproc) thread compile"
         make -j$(nproc) || make -j1 || make -j1 V=s
 
-    - name: 获取设备名字并设置当前的日期
+    - name: 获取固件设备名字
       working-directory: ./openwrt
       run: |
         grep '^CONFIG_TARGET_.*_DEVICE.*=y' .config | sed -r 's/^CONFIG_TARGET_(.*)_DEVICE.*=y/\1/' > DEVICE_NAME
         [ -s DEVICE_NAME ] && echo "DEVICE_NAME=$(cat DEVICE_NAME)" >> $GITHUB_ENV
-        echo "date1=$(date +'%Y.%m.%d-%H.%M')" >> $GITHUB_ENV
-        echo "date2=$(date +'%Y.%m.%d')" >> $GITHUB_ENV
-        echo "date3=$(date "+%Y年%m月%d日")" >> $GITHUB_ENV
 
     - name: 上传bin目录文件
       if: steps.compile.conclusion == 'success' && env.UPLOAD_BIN == 'true'
       uses: actions/upload-artifact@main
       with:
-        name: bin_${{ env.DEVICE_NAME }}_${{ env.date1 }}
+        name: bin_${{ env.OPENWRT_NAME }}_${{ env.DEVICE_NAME }}_${{ env.date1 }}
         path: openwrt/bin
 
     - name: 整理文件到firmware目录
@@ -118,8 +122,8 @@ jobs:
         -name "*squashfs-combined.vmdk" \
         -or -name "*quashfs-combined.img.gz" \
         | xargs -i cp {} ./firmware/
-        cp -v ./openwrt/bin/targets/*/*/config.buildinfo ./firmware/${date1}_${DEVICE_NAME}_config.buildinfo
-        cp -v ./openwrt/.config  ./firmware/${date1}_${DEVICE_NAME}.config
+        cp -v ./openwrt/bin/targets/*/*/config.buildinfo ./firmware/${date1}_${OPENWRT_NAME}_${DEVICE_NAME}_config.buildinfo
+        cp -v ./openwrt/.config  ./firmware/${date1}_${OPENWRT_NAME}_${DEVICE_NAME}.config
         cd firmware
         sudo apt-get install -y rename
         rename -v 's/^/${date1}_${DEVICE_NAME}_/' *.vmdk
@@ -130,7 +134,7 @@ jobs:
       if: steps.organize.conclusion == 'success' && env.UPLOAD_FIRMWARE == 'true'
       uses: actions/upload-artifact@main
       with:
-        name: firmware_${{ env.DEVICE_NAME }}_${{ env.date1 }}
+        name: firmware_${{ env.OPENWRT_NAME }}_${{ env.DEVICE_NAME }}_${{ env.date1 }}
         path: ${{ env.FIRMWARE }}
 
     - name: 生成release描述
@@ -152,7 +156,6 @@ jobs:
 
     - name: config文件上传自动更新1
       run : |
-        echo "编译状态: ${{ steps.compile.conclusion }}"
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config --global user.name "github-actions[bot]"
     - name: config文件上传自动更新2
