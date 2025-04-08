@@ -23,6 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.repository.owner.id == github.event.sender.id
     steps:
+
     - name: 释放Ubuntu磁盘空间
       uses: coder-xiaomo/free-disk-space@main
       with:
@@ -33,8 +34,10 @@ jobs:
         large-packages: true
         docker-images: true
         swap-storage: true
+
     - name: 加载项目文件
       uses: actions/checkout@main
+
     - name: 初始化编译环境
       env:
         DEBIAN_FRONTEND: noninteractive
@@ -49,12 +52,14 @@ jobs:
         ninja-build p7zip p7zip-full patch pkgconf python3 python3-pip python3-ply python3-docutils \
         python3-pyelftools qemu-utils re2c rsync scons squashfs-tools subversion swig texinfo uglifyjs \
         upx-ucl unzip vim wget xmlto xxd zlib1g-dev zstd
+
     - name: 设置当前的日期
       run: |
         sudo timedatectl set-timezone "$TZ"
         echo "date1=$(date +'%Y.%m.%d-%H.%M')" >> $GITHUB_ENV
         echo "date2=$(date +'%Y.%m.%d')" >> $GITHUB_ENV
         echo "date3=$(date "+%Y年%m月%d日")" >> $GITHUB_ENV
+
     - name: 下载固件源码
       run: |
         git clone ${{ env.REPO_URL }} -b ${{ env.REPO_BRANCH }} openwrt
