@@ -118,14 +118,15 @@ jobs:
       if: steps.compile.outcome == 'success'
       run: | 
         mkdir firmware
-        find openwrt/bin/targets/*/*/ -maxdepth 1 \
-        -name "*squashfs-combined*" \
-        | xargs cp -t ./firmware/
-        cp -v ./openwrt/bin/targets/*/*/config.buildinfo ./firmware/${{ env.date1 }}_${{ env.OPENWRT_NAME }}_${{ env.GRUB_NAME }}_${{ env.DEVICE_NAME }}_config.buildinfo
         cp -v ./openwrt/.config  ./firmware/${{ env.date1 }}_${{ env.OPENWRT_NAME }}_${{ env.GRUB_NAME }}_${{ env.DEVICE_NAME }}.config
+        find openwrt/bin/targets/*/*/ -maxdepth 1 \
+        -name "config.buildinfo" \
+        -or -name "*squashfs-combined*" \
+        | xargs cp -t ./firmware/
         cd firmware
         sudo apt-get install -y rename
-        rename -v 's/^/${{ env.date1 }}_/' *squashfs-combined*
+        rename -v 's/^/${{ env.date1 }}_${{ env.OPENWRT_NAME }}_${{ env.GRUB_NAME }}_${{ env.DEVICE_NAME }}_/' config.buildinfo
+        rename -v 's/^/${{ env.date1 }}_${{ env.OPENWRT_NAME }}_/' *squashfs-combined*
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
 
     - name: 上传firmware目录文件
