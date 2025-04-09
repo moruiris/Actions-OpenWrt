@@ -101,7 +101,7 @@ jobs:
     - name: 获取固件设备名字
       working-directory: ./openwrt
       run: |
-        grep '^CONFIG_TARGET_.*_DEVICE.*=y' .config | sed -r 's/^CONFIG_TARGET_(.*)_DEVICE.*=y/\1/' > DEVICE_NAME
+        grep '^CONFIG_TARGET_.*_DEVICE_.*=y' .config | sed -r 's/^CONFIG_TARGET_(.*)_DEVICE_(.*)=y/\1_\2/' > DEVICE_NAME
         [ -s DEVICE_NAME ] && echo "DEVICE_NAME=$(cat DEVICE_NAME)" >> $GITHUB_ENV
         grep '^CONFIG_GRUB_TITLE=".*"' .config | sed -r 's/^CONFIG_GRUB_TITLE="(.*)"/\1/' > GRUB_NAME
         [ -s GRUB_NAME ] && echo "GRUB_NAME=$(cat GRUB_NAME)" >> $GITHUB_ENV
