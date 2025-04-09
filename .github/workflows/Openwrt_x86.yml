@@ -3,7 +3,7 @@ name: Openwrt_x86
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 16 * * *'
+    - cron: "0 16 * * *"
 
 env:
   OPENWRT_NAME: Openwrt
