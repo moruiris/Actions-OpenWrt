@@ -103,6 +103,8 @@ jobs:
       run: |
         grep '^CONFIG_TARGET_.*_DEVICE.*=y' .config | sed -r 's/^CONFIG_TARGET_(.*)_DEVICE.*=y/\1/' > DEVICE_NAME
         [ -s DEVICE_NAME ] && echo "DEVICE_NAME=$(cat DEVICE_NAME)" >> $GITHUB_ENV
+        grep '^CONFIG_GRUB_TITLE=".*"' .config | sed -r 's/^CONFIG_GRUB_TITLE="(.*)"/\1/' > GRUB_NAME
+        [ -s GRUB_NAME ] && echo "GRUB_NAME=$(cat GRUB_NAME)" >> $GITHUB_ENV
 
     - name: 上传bin目录文件
       if: steps.compile.outcome == 'success' && env.UPLOAD_BIN == 'true'
@@ -117,15 +119,13 @@ jobs:
       run: | 
         mkdir firmware
         find openwrt/bin/targets/*/*/ -maxdepth 1 \
-        -name "*squashfs-combined.vmdk" \
-        -or -name "*quashfs-combined.img.gz" \
-        | xargs -i cp {} ./firmware/
-        cp -v ./openwrt/bin/targets/*/*/config.buildinfo ./firmware/${{ env.date1 }}_${{ env.OPENWRT_NAME }}_${{ env.DEVICE_NAME }}_config.buildinfo
-        cp -v ./openwrt/.config  ./firmware/${{ env.date1 }}_${{ env.OPENWRT_NAME }}_${{ env.DEVICE_NAME }}.config
+        -name "*squashfs-combined*" \
+        | xargs cp -t ./firmware/
+        cp -v ./openwrt/bin/targets/*/*/config.buildinfo ./firmware/${{ env.date1 }}_${{ env.OPENWRT_NAME }}_${{ env.GRUB_NAME }}_${{ env.DEVICE_NAME }}_config.buildinfo
+        cp -v ./openwrt/.config  ./firmware/${{ env.date1 }}_${{ env.OPENWRT_NAME }}_${{ env.GRUB_NAME }}_${{ env.DEVICE_NAME }}.config
         cd firmware
         sudo apt-get install -y rename
-        rename -v 's/^/${{ env.date1 }}_/' *.vmdk
-        rename -v 's/^/${{ env.date1 }}_/' *.img.gz
+        rename -v 's/^/${{ env.date1 }}_/' *squashfs-combined*
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
 
     - name: 上传firmware目录文件
