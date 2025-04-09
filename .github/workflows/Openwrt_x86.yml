@@ -103,7 +103,7 @@ jobs:
       run: |
         grep '^CONFIG_TARGET_.*_DEVICE.*=y' .config | sed -r 's/^CONFIG_TARGET_(.*)_DEVICE.*=y/\1/' > DEVICE_NAME
         [ -s DEVICE_NAME ] && echo "DEVICE_NAME=$(cat DEVICE_NAME)" >> $GITHUB_ENV
-        grep 'CONFIG_GRUB_TITLE=".*"' .config | sed -r 's/CONFIG_GRUB_TITLE="(.*)"/\1/' > OPENWRT_NAME
+        grep '^CONFIG_GRUB_TITLE=".*"' .config | sed -r 's/CONFIG_GRUB_TITLE="(.*)"/\1/' > OPENWRT_NAME
         [ -s OPENWRT_NAME ] && echo "OPENWRT_NAME=$(cat OPENWRT_NAME)" >> $GITHUB_ENV
 
     - name: 上传bin目录文件
