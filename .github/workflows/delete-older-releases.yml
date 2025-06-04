@@ -16,3 +16,10 @@ jobs:
         delete_tags: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: 删除工作流
+      uses: Mattraks/delete-workflow-runs@main
+      with:
+        delete_workflow_pattern: ${{ github.workflow }}
+        retain_days: 7
+        keep_minimum_runs: 0
