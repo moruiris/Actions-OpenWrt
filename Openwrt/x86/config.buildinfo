@@ -48,6 +48,7 @@ CONFIG_PACKAGE_kmod-ipt-ipset=y
 CONFIG_PACKAGE_kmod-nf-conntrack-netlink=y
 CONFIG_PACKAGE_kmod-nf-ipt=y
 CONFIG_PACKAGE_kmod-vmxnet3=y
+CONFIG_PACKAGE_libatomic=y
 CONFIG_PACKAGE_libcap=y
 CONFIG_PACKAGE_libcurl=y
 CONFIG_PACKAGE_libgmp=y
