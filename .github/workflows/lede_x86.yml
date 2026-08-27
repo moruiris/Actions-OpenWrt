@@ -3,8 +3,7 @@ name: lede_x86
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 1 * * *"
-      timezone: 'Asia/Shanghai'
+    - cron: "30 16 * * *"
 
 env:
   OPENWRT_NAME: lede
