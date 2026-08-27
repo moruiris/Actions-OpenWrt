@@ -3,8 +3,7 @@ name: delete-older-releases
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 1 * * *"
-      timezone: 'Asia/Shanghai'
+    - cron: "30 16 * * *"
 
 jobs:
   del_runs:
