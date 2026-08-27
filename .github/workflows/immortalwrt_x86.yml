@@ -3,7 +3,7 @@ name: immortalwrt_x86
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 0 * * *"
+    - cron: "11 1 * * *"
       timezone: "Asia/Shanghai"
 
 env:
