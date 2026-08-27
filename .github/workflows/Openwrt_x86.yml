@@ -3,8 +3,7 @@ name: Openwrt_x86
 on:
   workflow_dispatch:
   schedule:
-    - cron: "11 1 * * *"
-      timezone: "Asia/Shanghai"
+    - cron: "16 16 * * *"
 
 env:
   OPENWRT_NAME: Openwrt
