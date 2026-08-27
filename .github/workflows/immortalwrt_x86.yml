@@ -3,8 +3,8 @@ name: immortalwrt_x86
 on:
   workflow_dispatch:
   schedule:
-    - cron: "11 1 * * *"
-      timezone: "Asia/Shanghai"
+  schedule:
+    - cron: "16 16 * * *"
 
 env:
   OPENWRT_NAME: immortalwrt
