@@ -18,7 +18,6 @@ CONFIG_LIBCURL_ZLIB=y
 CONFIG_LUCI_LANG_zh_Hans=y
 CONFIG_LUCI_SRCDIET=y
 CONFIG_PACKAGE_adguardhome=y
-CONFIG_PACKAGE_attendedsysupgrade-common=y
 # CONFIG_PACKAGE_automount is not set
 CONFIG_PACKAGE_bash=y
 # CONFIG_PACKAGE_block-mount is not set
